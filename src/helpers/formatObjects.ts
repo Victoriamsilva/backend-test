@@ -1,4 +1,5 @@
-import { Opportunity } from 'src/opportunities/entities/opportunity.entity';
+import { Opportunity } from 'src/opportunities/schema/opportunity.schema';
+import { Product } from 'src/types/product';
 import { json2xml } from 'xml-js';
 
 export function formatOpportunity(
@@ -17,33 +18,33 @@ export function formatOpportunity(
     : [];
 
   const opportunitiesFormatted = {
-    id: opportunity.id,
+    orderId: opportunity.id,
     creator: {
       id: opportunity.creator_user_id.id,
       name: opportunity.creator_user_id.name,
       email: opportunity?.creator_user_id?.email,
     },
     contact: {
-      id: opportunity?.person_id?.value,
       name: opportunity?.person_id?.name,
       email: opportunity?.person_id?.email[0]?.value,
       phone: opportunity?.person_id?.phone[0]?.value,
     },
     organization: {
-      id: opportunity?.org_id?.value,
       name: opportunity?.org_id?.name,
     },
     title: opportunity?.title,
+    value: opportunity?.value,
+    date: new Date(opportunity?.add_time),
     products: productsFormatted,
   };
 
   return opportunitiesFormatted;
 }
 
-export function formatOrderToSave(order: any) {
+export function formatOrderToSave(order: Opportunity) {
   const products =
     order.products.length > 0
-      ? order.products.map((product) => {
+      ? order.products.map((product: Product) => {
           return {
             item: {
               codigo: product.id,
@@ -55,7 +56,7 @@ export function formatOrderToSave(order: any) {
         })
       : {
           item: {
-            codigo: order.id,
+            codigo: order.orderId,
             descricao: order.title,
             qtde: 1,
             vlr_unit: 10,
@@ -63,7 +64,13 @@ export function formatOrderToSave(order: any) {
         };
   const orderFormatted = {
     pedido: {
-      numero: order.id,
+      numero: order.orderId,
+      data:
+        order.date.getDate() +
+        '/' +
+        order.date.getMonth() +
+        '/' +
+        order.date.getFullYear(),
       cliente: {
         nome: order.contact.name,
         fone: order?.contact.phone,

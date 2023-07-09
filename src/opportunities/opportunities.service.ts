@@ -5,12 +5,18 @@ import {
   formatOpportunity,
   formatOrderToSave,
 } from 'src/helpers/formatObjects';
-import { Opportunity } from './entities/opportunity.entity';
+import { Opportunity } from './schema/opportunity.schema';
 import { Product } from 'src/types/product';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class OpportunitiesService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    @InjectModel('Opportunity')
+    private readonly opportunityModel: Model<Opportunity>,
+  ) {}
 
   async findAllOpportunities(): Promise<Opportunity[]> {
     const url = getUrl({
@@ -88,7 +94,7 @@ export class OpportunitiesService {
       }
 
       for (const opportunity of opportunities) {
-        const order = await this.findOneOrder(opportunity.id);
+        const order = await this.findOneOrder(opportunity.orderId);
         if (order.msg === 'Pedido não encontrado') {
           const parammeters = formatOrderToSave(opportunity);
           const url = getUrl({
@@ -98,6 +104,12 @@ export class OpportunitiesService {
           });
 
           const orderCreated = await this.httpService.axiosRef.post(url);
+          const hasOrder = await this.opportunityModel.findOne({
+            orderId: opportunity.orderId,
+          });
+          if (!hasOrder) {
+            await new this.opportunityModel(opportunity).save();
+          }
           ordersCreated.push(orderCreated);
         }
       }
