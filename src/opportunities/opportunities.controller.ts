@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Controller, Get, Post, Query } from '@nestjs/common';
 import { OpportunitiesService } from './opportunities.service';
 import { PaginationProps } from 'src/types/pagination';
 
