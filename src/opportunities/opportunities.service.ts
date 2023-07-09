@@ -9,6 +9,7 @@ import { Opportunity } from './schema/opportunity.schema';
 import { Product } from 'src/types/product';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { PaginationProps } from 'src/types/pagination';
 
 @Injectable()
 export class OpportunitiesService {
@@ -122,5 +123,25 @@ export class OpportunitiesService {
     } catch (error) {
       return error;
     }
+  }
+
+  async findPaginated({ page, limit }: PaginationProps) {
+    const opportunities = await this.opportunityModel
+      .find()
+      .sort({ date: -1 })
+      .skip(page * limit)
+      .limit(limit)
+      .exec();
+
+    const count = await this.opportunityModel
+      .countDocuments()
+      .skip(page * limit)
+      .limit(limit)
+      .exec();
+
+    return {
+      opportunities,
+      count,
+    };
   }
 }

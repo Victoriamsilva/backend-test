@@ -1,10 +1,10 @@
-interface IGetUrl {
+type GetUrl = {
   endpoint: 'BLING' | 'PIPEDRIVE';
   route: string;
   parammeters?: string;
-}
+};
 
-export function getUrl({ endpoint, route, parammeters }: IGetUrl): string {
+export function getUrl({ endpoint, route, parammeters }: GetUrl): string {
   parammeters = parammeters ? parammeters : '';
 
   if (endpoint === 'BLING') {
