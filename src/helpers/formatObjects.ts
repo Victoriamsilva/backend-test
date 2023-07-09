@@ -1,7 +1,21 @@
-import { Product } from 'src/types/product';
+import { Opportunity } from 'src/opportunities/entities/opportunity.entity';
 import { json2xml } from 'xml-js';
 
-export function formatOpportunity(opportunity: any) {
+export function formatOpportunity(
+  opportunity: any,
+  products: any,
+): Opportunity {
+  const productsFormatted = products.length
+    ? products.map((product) => {
+        return {
+          id: product.id,
+          name: product?.name,
+          quantity: product?.quantity,
+          price: product?.item_price,
+        };
+      })
+    : [];
+
   const opportunitiesFormatted = {
     id: opportunity.id,
     creator: {
@@ -20,43 +34,33 @@ export function formatOpportunity(opportunity: any) {
       name: opportunity?.org_id?.name,
     },
     title: opportunity?.title,
+    products: productsFormatted,
   };
 
   return opportunitiesFormatted;
 }
 
-export function formatProducts(products: any): Product[] {
-  const productsFormatted = products.map((product) => {
-    return {
-      id: product.id,
-      name: product?.name,
-      quantity: product?.quantity,
-      price: product?.item_price,
-    };
-  });
-  return productsFormatted;
-}
-
 export function formatOrderToSave(order: any) {
-  const products = order.products
-    ? order.products.map((product) => {
-        return {
+  const products =
+    order.products.length > 0
+      ? order.products.map((product) => {
+          return {
+            item: {
+              codigo: product.id,
+              descricao: product.name,
+              qtde: product.quantity,
+              vlr_unit: product.price,
+            },
+          };
+        })
+      : {
           item: {
-            codigo: product.id,
-            descricao: product.name,
-            qtde: product.quantity,
-            vlr_unit: product.price,
+            codigo: order.id,
+            descricao: order.title,
+            qtde: 1,
+            vlr_unit: 10,
           },
         };
-      })
-    : {
-        item: {
-          codigo: order.id,
-          descricao: order.title,
-          qtde: 1,
-          vlr_unit: 10,
-        },
-      };
   const orderFormatted = {
     pedido: {
       numero: order.id,

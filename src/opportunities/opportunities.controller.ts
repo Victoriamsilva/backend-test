@@ -15,7 +15,7 @@ import { UpdateOpportunityDto } from './dto/update-opportunity.dto';
 export class OpportunitiesController {
   constructor(private readonly opportunitiesService: OpportunitiesService) {}
 
-  @Get()
+  @Post()
   findAndCreateOnBling() {
     return this.opportunitiesService.createOrderOnBling();
   }
