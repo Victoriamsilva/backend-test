@@ -31,9 +31,11 @@ export class OpportunitiesService {
         .get(url)
         .then((res) => res.data);
       const opportunities = [];
+
       if (!data) {
         return [];
       }
+
       for (const opportunity of data) {
         const products = await this.findProductsByOpportunityId(opportunity.id);
         opportunities.push({
@@ -96,6 +98,7 @@ export class OpportunitiesService {
 
       for (const opportunity of opportunities) {
         const order = await this.findOneOrder(opportunity.orderId);
+
         if (order.msg === 'Pedido não encontrado') {
           const parammeters = formatOrderToSave(opportunity);
           const url = getUrl({
@@ -103,11 +106,11 @@ export class OpportunitiesService {
             route: 'pedido/json/',
             parammeters: `&xml=<?xml version="1.0" encoding="UTF-8"?>${parammeters}`,
           });
-
           const orderCreated = await this.httpService.axiosRef.post(url);
           const hasOrder = await this.opportunityModel.findOne({
             orderId: opportunity.orderId,
           });
+
           if (!hasOrder) {
             await new this.opportunityModel(opportunity).save();
           }
@@ -125,25 +128,42 @@ export class OpportunitiesService {
     }
   }
 
-  async findPaginated({ page, limit }: PaginationProps, search?: string) {
+  async findPaginated(
+    { page, limit }: PaginationProps,
+    search?: string,
+    date?: string,
+  ) {
     try {
-      const opportunities = await this.opportunityModel
-        .find({
+      let query = {};
+      const dateQuery = new Date(date);
+      dateQuery.setDate(dateQuery.getDate() + 1);
+
+      if (search) {
+        query = {
           $or: [
             { title: { $regex: search, $options: 'i' } },
             { 'contact.name': { $regex: search, $options: 'i' } },
           ],
-        })
+        };
+      }
+
+      if (date) {
+        query = {
+          ...query,
+          date: {
+            $gte: new Date(date),
+            $lt: dateQuery,
+          },
+        };
+      }
+
+      const opportunities = await this.opportunityModel
+        .find(query)
         .skip(page * limit)
         .limit(limit)
         .sort({ date: -1 });
 
-      const count = await this.opportunityModel.countDocuments({
-        $or: [
-          { title: { $regex: search, $options: 'i' } },
-          { 'contact.name': { $regex: search, $options: 'i' } },
-        ],
-      });
+      const count = await this.opportunityModel.countDocuments(query);
 
       return {
         opportunities,

@@ -15,7 +15,12 @@ export class OpportunitiesController {
   findAll(
     @Query() paginationProps: PaginationProps,
     @Query('search') search: string,
+    @Query('date') date: string,
   ) {
-    return this.opportunitiesService.findPaginated(paginationProps, search);
+    return this.opportunitiesService.findPaginated(
+      paginationProps,
+      search,
+      date,
+    );
   }
 }

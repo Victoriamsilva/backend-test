@@ -35,7 +35,6 @@ export function formatOpportunity(
     title: opportunity?.title,
     value: opportunity?.value,
     date: new Date(opportunity?.add_time),
-    quantity: opportunity?.products_count || 1,
     products: productsFormatted,
   };
 
@@ -63,6 +62,7 @@ export function formatOrderToSave(order: Opportunity) {
             vlr_unit: 10,
           },
         };
+
   const orderFormatted = {
     pedido: {
       numero: order.orderId,
