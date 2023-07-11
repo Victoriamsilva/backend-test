@@ -12,7 +12,10 @@ export class OpportunitiesController {
   }
 
   @Get()
-  findAll(@Query() paginationProps: PaginationProps) {
-    return this.opportunitiesService.findPaginated(paginationProps);
+  findAll(
+    @Query() paginationProps: PaginationProps,
+    @Query('search') search: string,
+  ) {
+    return this.opportunitiesService.findPaginated(paginationProps, search);
   }
 }

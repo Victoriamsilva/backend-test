@@ -125,23 +125,32 @@ export class OpportunitiesService {
     }
   }
 
-  async findPaginated({ page, limit }: PaginationProps) {
-    const opportunities = await this.opportunityModel
-      .find()
-      .sort({ date: -1 })
-      .skip(page * limit)
-      .limit(limit)
-      .exec();
+  async findPaginated({ page, limit }: PaginationProps, search?: string) {
+    try {
+      const opportunities = await this.opportunityModel
+        .find({
+          $or: [
+            { title: { $regex: search, $options: 'i' } },
+            { 'contact.name': { $regex: search, $options: 'i' } },
+          ],
+        })
+        .skip(page * limit)
+        .limit(limit)
+        .sort({ date: -1 });
 
-    const count = await this.opportunityModel
-      .countDocuments()
-      .skip(page * limit)
-      .limit(limit)
-      .exec();
+      const count = await this.opportunityModel.countDocuments({
+        $or: [
+          { title: { $regex: search, $options: 'i' } },
+          { 'contact.name': { $regex: search, $options: 'i' } },
+        ],
+      });
 
-    return {
-      opportunities,
-      count,
-    };
+      return {
+        opportunities,
+        count,
+      };
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
