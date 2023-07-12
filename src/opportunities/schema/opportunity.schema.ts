@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Product } from 'src/types/product';
 
-@Schema({ typeKey: '$type' })
+@Schema()
 export class Opportunity {
   @Prop()
   orderId: number;

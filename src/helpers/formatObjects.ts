@@ -69,7 +69,7 @@ export function formatOrderToSave(order: Opportunity) {
       data:
         order.date.getDate() +
         '/' +
-        order.date.getMonth() +
+        (order.date.getMonth() + 1) +
         '/' +
         order.date.getFullYear(),
       cliente: {
