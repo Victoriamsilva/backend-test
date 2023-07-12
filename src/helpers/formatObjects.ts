@@ -59,7 +59,7 @@ export function formatOrderToSave(order: Opportunity) {
             codigo: order.orderId,
             descricao: order.title,
             qtde: 1,
-            vlr_unit: 10,
+            vlr_unit: order.value,
           },
         };
 
