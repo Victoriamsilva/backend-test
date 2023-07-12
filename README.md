@@ -20,8 +20,8 @@ Base de dados: MongoDB
 É necessário criar um arquivo .env na raiz do projeto seguindo o seguinte template:
 
 ```shell
-  PIPEDRIVE_URL='https://[seu-dominio].pipedrive.com/v1/'
-  PIPEDRIVE_TOKEN='?api_token=[TOKEN do pipedrive]'
+  PIPEDRIVE_URL='https://[seu dominio].pipedrive.com/v1/'
+  PIPEDRIVE_TOKEN='?api_token=[token do pipedrive]'
   BLING_URL='https://bling.com.br/Api/v2/'
   BLING_TOKEN='?apikey=[apikey do bling]'
   DB_URL='mongodb://127.0.0.1:27017/db'
