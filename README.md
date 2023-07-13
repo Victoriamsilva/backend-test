@@ -31,6 +31,8 @@ Base de dados: MongoDB
 
 - Retorna todas as oportunidades - Get - http://localhost:3000/opportunities
 
+- Retorna o total de oportunidades - Get - http://localhost:3000/opportunities/total
+
 - Cria as oportunidades ganhas do pipedrive no banco de dados e no bling - Post - http://localhost:3000/opportunities
 
 ## 🛠️ Construído com
