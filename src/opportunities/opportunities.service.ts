@@ -173,4 +173,49 @@ export class OpportunitiesService {
       console.log(error);
     }
   }
+
+  async getTotal(date?: string, search?: string) {
+    try {
+      let query = {};
+      const dateQuery = new Date(date);
+      dateQuery.setDate(dateQuery.getDate() + 1);
+
+      if (search) {
+        query = {
+          $or: [
+            { title: { $regex: search, $options: 'i' } },
+            { 'contact.name': { $regex: search, $options: 'i' } },
+          ],
+        };
+      }
+
+      if (date) {
+        query = {
+          ...query,
+          date: {
+            $gte: new Date(date),
+            $lt: dateQuery,
+          },
+        };
+      }
+
+      const result = await this.opportunityModel.aggregate([
+        {
+          $match: query,
+        },
+        {
+          $group: {
+            _id: null,
+            total: {
+              $sum: '$value',
+            },
+          },
+        },
+      ]);
+
+      return result[0].total;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }

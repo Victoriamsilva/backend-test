@@ -23,4 +23,9 @@ export class OpportunitiesController {
       date,
     );
   }
+
+  @Get('total')
+  getTotal(@Query('date') date: string, @Query('search') search: string) {
+    return this.opportunitiesService.getTotal(date, search);
+  }
 }
